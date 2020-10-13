@@ -1,6 +1,6 @@
 #include"vier.h"
 
-#define TIME_FOR_TIMER 10
+#define TIME_FOR_TIMER 1
 
 void timer::set_time(long time) {
     first = time;
@@ -62,7 +62,11 @@ void vier::set_machin(machin* m) {
 
 vier::vier() {
     __timer = {TIME_FOR_TIMER, []() {
+        #ifdef USE_OMP
+        vier::get() -> __machin -> next_step_omp(4);
+        #else
         vier::get() -> __machin -> next_step();
+        #endif
     }};
 }
 

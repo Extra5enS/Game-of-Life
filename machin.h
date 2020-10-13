@@ -15,6 +15,7 @@ public:
     machin();
     void set_start_map(control*);
     void next_step();
+    void next_step_omp(size_t);
     void visit_map(map_printer printer);
 private:
     map __map;

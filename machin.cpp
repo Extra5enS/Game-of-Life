@@ -37,21 +37,46 @@ int looking_around(map m, coord place, char find_char) {
 
 void machin::next_step() {
     map __new_map = __map;
-    for(size_t x = 0; x < __map.size(); ++x) {
-        for(size_t y = 0; y < __map[0].size(); ++y) {
-            if(__map[x][y] == 'x') {
-                int num = looking_around(__map, {x, y}, 'x');
+    for(size_t x = 0; x < __new_map.size(); ++x) {
+        for(size_t y = 0; y < __new_map[0].size(); ++y) {
+            if(__new_map[x][y] == 'x') {
+                int num = looking_around(__new_map, {x, y}, 'x');
                 if(num < 2 || num > 3) {
-                    __new_map[x][y] = '\0';
+                    __map[x][y] = '\0';
                 }
             }
-            if(__map[x][y] == '\0') {
-                int num = looking_around(__map, {x, y}, 'x');
+            if(__new_map[x][y] == '\0') {
+                int num = looking_around(__new_map, {x, y}, 'x');
                 if(num == 3) {
-                    __new_map[x][y] = 'x';
+                    __map[x][y] = 'x';
                 }
             }
         }
     }
-    __map = __new_map;
+}
+
+void machin::next_step_omp(size_t num_threads) {
+    map __new_map = __map;
+    #pragma omp parallel num_threads(num_threads)
+    {
+        #pragma omp for
+        for(size_t x = 0; x < __new_map.size(); ++x) {
+            //#pragma omp for
+            for(size_t y = 0; y < __new_map[0].size(); ++y) {
+                if(__new_map[x][y] == 'x') {
+                    int num = looking_around(__new_map, {x, y}, 'x');
+                    if(num < 2 || num > 3) {
+                        __map[x][y] = '\0';
+                    }
+                }
+                if(__new_map[x][y] == '\0') {
+                    int num = looking_around(__new_map, {x, y}, 'x');
+                    if(num == 3) {
+                        __map[x][y] = 'x';
+                    }
+                }
+            }
+        }
+
+    }
 }
